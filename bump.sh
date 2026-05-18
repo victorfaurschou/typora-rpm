@@ -28,10 +28,8 @@ TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
 VERSION_OVERRIDE=""
-VERBOSE=0
 while [ $# -gt 0 ]; do
     case "$1" in
-        -v|--verbose) VERBOSE=1; shift ;;
         --version)
             if [ -z "${2:-}" ]; then
                 printf '%s\n' "Error: --version requires an argument" >&2
@@ -47,27 +45,6 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-log() {
-    if [ "$VERBOSE" -eq 1 ]; then
-        printf '%s\n' "$@"
-    fi
-}
-
-run() {
-    if [ "$VERBOSE" -eq 1 ]; then
-        "$@"
-    else
-        out=$(mktemp)
-        if ! "$@" >"$out" 2>&1; then
-            cat "$out" >&2
-            rm -f "$out"
-            return 1
-        fi
-        rm -f "$out"
-    fi
-}
-
-log "Downloading upstream tarballs"
 curl -fsSL --retry 3 -o "$TMP/x86_64.tar.gz" "$URL_X86_64"
 curl -fsSL --retry 3 -o "$TMP/aarch64.tar.gz" "$URL_AARCH64"
 
@@ -106,12 +83,6 @@ else
     NEW_REL=1
 fi
 
-log "Upstream changed:"
-log "  x86_64  in spec: $OLD_SHA_X86_64"
-log "  x86_64  current: $NEW_SHA_X86_64"
-log "  aarch64 in spec: $OLD_SHA_AARCH64"
-log "  aarch64 current: $NEW_SHA_AARCH64"
-
 DATE=$(LC_ALL=C date '+%a %b %d %Y')
 
 sed -i "s|^%global[[:space:]]\+tarball_sha256_x86_64.*|%global tarball_sha256_x86_64  $NEW_SHA_X86_64|" "$SPEC"
@@ -130,20 +101,14 @@ awk -v date="$DATE" -v author="$AUTHOR" -v ver="$VERSION" -v rel="$NEW_REL" '
     { print }
 ' "$SPEC" > "$SPEC.new" && mv "$SPEC.new" "$SPEC"
 
-log "Rebuilding RPMs (x86_64, aarch64)"
 rm -rf RPMS BUILD SRPMS BUILDROOT
-run rpmbuild --target x86_64  --define "_topdir $PWD" -bb "$SPEC"
-run rpmbuild --target aarch64 --define "_topdir $PWD" -bb "$SPEC"
+rpmbuild --target x86_64  --define "_topdir $PWD" -bb "$SPEC"
+rpmbuild --target aarch64 --define "_topdir $PWD" -bb "$SPEC"
 
 mkdir -p repo
 rm -f repo/typora-*.rpm
 cp "RPMS/x86_64/typora-${VERSION}-${NEW_REL}.x86_64.rpm"   repo/
 cp "RPMS/aarch64/typora-${VERSION}-${NEW_REL}.aarch64.rpm" repo/
-run createrepo_c --update repo
-
-log ""
-log "New RPMs:"
-log "  repo/typora-${VERSION}-${NEW_REL}.x86_64.rpm"
-log "  repo/typora-${VERSION}-${NEW_REL}.aarch64.rpm"
+createrepo_c --update repo
 
 printf 'rebuilt %s-%s\n' "$VERSION" "$NEW_REL"
