@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force rebuild even if upstream SHAs are unchanged'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -39,7 +44,13 @@ jobs:
       - name: Run bump.sh
         id: bump
         run: |
-          result=$(./bump.sh)
+          if [ "${{ inputs.force }}" = "true" ]; then
+              # Pass current spec version to force a Release bump
+              ver=$(awk '/^Version:/ {print $2}' SPECS/typora.spec)
+              result=$(./bump.sh --version "$ver")
+          else
+              result=$(./bump.sh)
+          fi
           echo "result=$result" >> "$GITHUB_OUTPUT"
           echo "bump.sh: $result"
 
