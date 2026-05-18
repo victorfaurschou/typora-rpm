@@ -135,6 +135,7 @@ rm -rf RPMS BUILD SRPMS BUILDROOT
 run rpmbuild --target x86_64  --define "_topdir $PWD" -bb "$SPEC"
 run rpmbuild --target aarch64 --define "_topdir $PWD" -bb "$SPEC"
 
+mkdir -p repo
 rm -f repo/typora-*.rpm
 cp "RPMS/x86_64/typora-${VERSION}-${NEW_REL}.x86_64.rpm"   repo/
 cp "RPMS/aarch64/typora-${VERSION}-${NEW_REL}.aarch64.rpm" repo/
