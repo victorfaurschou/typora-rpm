@@ -2,9 +2,9 @@
 %global __strip /bin/true
 
 %global tarball_url_x86_64     https://downloads.typora.io/linux/Typora-linux-x64.tar.gz
-%global tarball_sha256_x86_64  4e6e835ec944485cab066fc41a8ab2b37b849e2437f8d55e219806c8095794a5
+%global tarball_sha256_x86_64  6b5194d721d14c68bcee98730ff7f37355799cf4f8ad1cbe0dc136af043e3ba8
 %global tarball_url_aarch64    https://downloads.typora.io/linux/Typora-linux-arm64.tar.gz
-%global tarball_sha256_aarch64 ac5cf81d4d819e492ac96e4f7dc4a6a6a36f26eced0a92bb2e791c3fc9c2cd41
+%global tarball_sha256_aarch64 9f80abc104d05d62ad1c158134fe811b35b3e87fd1b417d9a1e5dbccd3b1220a
 
 %ifarch x86_64
 %global tarball_url    %{tarball_url_x86_64}
@@ -17,7 +17,7 @@
 
 Name:           typora
 Version:        1.13.4
-Release:        4
+Release:        5
 Summary:        Minimal Markdown editor (installer - downloads binary at install time)
 
 License:        Proprietary
@@ -135,6 +135,9 @@ fi
 %{_datadir}/applications/typora.desktop
 
 %changelog
+* Mon May 18 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 1.13.4-5
+- Bump pinned tarball SHA256 for x86_64 and aarch64.
+
 * Mon May 18 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 1.13.4-4
 - Bump pinned tarball SHA256 for x86_64 and aarch64.
 
