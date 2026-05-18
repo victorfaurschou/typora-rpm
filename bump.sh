@@ -1,6 +1,7 @@
 #!/bin/sh
-# On success, prints either 'no-change' or 'rebuilt <version>-<release>' to
-# stdout and exits 0. Non-zero exit means an actual failure.
+# Stdout is reserved for the result line: either 'no-change' or
+# 'rebuilt <version>-<release>'. All other output (build logs, warnings,
+# errors) goes to stderr. Exit 0 on success, non-zero on actual failure.
 set -eu
 
 for cmd in rpmbuild createrepo_c curl sha256sum; do
@@ -102,13 +103,13 @@ awk -v date="$DATE" -v author="$AUTHOR" -v ver="$VERSION" -v rel="$NEW_REL" '
 ' "$SPEC" > "$SPEC.new" && mv "$SPEC.new" "$SPEC"
 
 rm -rf RPMS BUILD SRPMS BUILDROOT
-rpmbuild --target x86_64  --define "_topdir $PWD" -bb "$SPEC"
-rpmbuild --target aarch64 --define "_topdir $PWD" -bb "$SPEC"
+rpmbuild --target x86_64  --define "_topdir $PWD" -bb "$SPEC" >&2
+rpmbuild --target aarch64 --define "_topdir $PWD" -bb "$SPEC" >&2
 
 mkdir -p repo
 rm -f repo/typora-*.rpm
 cp "RPMS/x86_64/typora-${VERSION}-${NEW_REL}.x86_64.rpm"   repo/
 cp "RPMS/aarch64/typora-${VERSION}-${NEW_REL}.aarch64.rpm" repo/
-createrepo_c --update repo
+createrepo_c --update repo >&2
 
 printf 'rebuilt %s-%s\n' "$VERSION" "$NEW_REL"
