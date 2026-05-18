@@ -17,7 +17,7 @@
 
 Name:           typora
 Version:        1.13.4
-Release:        3
+Release:        4
 Summary:        Minimal Markdown editor (installer - downloads binary at install time)
 
 License:        Proprietary
@@ -135,6 +135,9 @@ fi
 %{_datadir}/applications/typora.desktop
 
 %changelog
+* Mon May 18 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 1.13.4-4
+- Bump pinned tarball SHA256 for x86_64 and aarch64.
+
 * Sun May 17 2026 Victor Faurschou <mail@victorfaurschou.com> - 1.13.4-3
 - Bump pinned tarball SHA256 for x86_64 and aarch64.
 
