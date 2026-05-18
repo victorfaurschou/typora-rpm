@@ -1,0 +1,7 @@
+[typora]
+name=Typora
+baseurl=https://victorfaurschou.github.io/typora-rpm/
+enabled=1
+gpgcheck=0
+skip_if_unavailable=1
+metadata_expire=1h
