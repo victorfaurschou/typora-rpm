@@ -31,7 +31,7 @@ jobs:
         run: dnf install -y rpm-build createrepo_c curl git tar
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Mark workspace safe for git
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload Pages artifact
         if: startsWith(steps.bump.outputs.result, 'rebuilt')
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./repo
 
@@ -81,4 +81,4 @@ jobs:
     steps:
       - name: Deploy to Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
